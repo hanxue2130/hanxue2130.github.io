@@ -41,17 +41,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css"/>
 
 
-    <!-- 主题依赖的图标库，不要自行修改 -->
+
 
     <link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
-
-
     <link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
     <link rel="stylesheet" href="/css/main.css"/>
 
-    <!-- 自定义样式保持在最底部 -->
 
 
     <script id="fluid-configs">
@@ -309,26 +304,12 @@
 
 
 <script src="/js/local-search.js"></script>
-
-
 <script src="/js/img-lazyload.js"></script>
-
-
 <script src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js"></script>
-
-
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-
-
 <script src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js"></script>
-
-
 <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-
-
 <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js"></script>
 <script>
     (function (window, document) {
@@ -345,4 +326,12 @@
 
 
 </body>
+<div id="footer"></div>
+<script>
+    fetch('/footer.html')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('footer').innerHTML = html;
+        });
+</script>
 </html>
