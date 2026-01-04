@@ -76,6 +76,21 @@
     <script src="/js/utils.js"></script>
     <script src="/js/color-schema.js"></script>
     <meta name="generator" content="Hexo 5.4.0">
+    <style>
+        #projects .card {
+        background-color: #2f4154; /* Match the background color */
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #projects .card-img-top {
+        object-fit: cover;
+        width: 100%;
+        height: auto;
+        border-radius: 10px; /* Match the container's border-radius */
+        background-color: #2f4154; /* Fallback background color */
+    }</style>
 </head>
 
 
@@ -185,18 +200,34 @@
                         <label data-error="x" data-success="v"
                                for="local-search-input">keyword</label>
                     </div>
-                    <div class="list-group" id="local-search-result"></div>
+<!--                    <div class="list-group" id="local-search-result"></div>-->
                 </div>
             </div>
         </div>
     </div>
 
+    <section id="projects" class="container mt-5">
+        <div class="text-center mb-4">
+            <h2>My Projects</h2>
+            <p class="lead">Explore some of the projects I've worked on.</p>
+        </div>
+        <div class="row">
+            <!-- Project 1 -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="/img/EventUpImage/eventup-main.png" class="card-img-top" alt="Project 1">
+                    <div class="card-body">
+                        <h5 class="card-title">EventUp</h5>
 
+                    </div>
+                </div>
+            </div>
+    </section>
 </main>
 
 <footer class="text-center mt-5 py-3">
     <div class="footer-content">
-        <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span></span></a> <a
+        <a href="/img/EventUpImage/eventup-main.png" target="_blank" rel="nofollow noopener"><span></span></a> <a
             href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank"
             rel="nofollow noopener"><span></span></a>
     </div>
