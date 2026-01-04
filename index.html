@@ -68,17 +68,11 @@
     <script src="/js/utils.js"></script>
     <script src="/js/color-schema.js"></script>
     <!-- SCRIPTS -->
-
+    <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css"/>
 
-    <script>
-        NProgress.configure({"showSpinner": false, "trickleSpeed": 100})
-        NProgress.start()
-        window.addEventListener('load', function () {
-            NProgress.done();
-        })
-    </script>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
@@ -87,17 +81,8 @@
     <script src="/js/plugins.js"></script>
     <script src="/js/local-search.js"></script>
     <script src="/js/img-lazyload.js"></script>
-    <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js"></script>
-    <script>
-        (function (window, document) {
-            var typing = Fluid.plugins.typing;
-            var title = document.getElementById('subtitle').title;
 
-            typing(title)
-
-        })(window, document);
-    </script>
     <script>
         fetch('/footer.html')
             .then(response => response.text())

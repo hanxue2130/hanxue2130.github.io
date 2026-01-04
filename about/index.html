@@ -29,7 +29,6 @@
     <title>about - Chen&#39;s blog</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css"/>
     <link rel="stylesheet" href="/lib/hint/hint.min.css"/>
@@ -80,14 +79,6 @@
     </script>
     <script src="/js/utils.js"></script>
     <script src="/js/color-schema.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js"></script>
-    <script>
-        NProgress.configure({"showSpinner": false, "trickleSpeed": 100})
-        NProgress.start()
-        window.addEventListener('load', function () {
-            NProgress.done();
-        })
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js"></script>
     <script src="/js/events.js"></script>
@@ -98,15 +89,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-    <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js"></script>
-    <script>
-        (function (window, document) {
-            var typing = Fluid.plugins.typing;
-            var title = document.getElementById('subtitle').title;
-            typing(title)
-        })(window, document);
-    </script>
+    <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
     <script src="/js/boot.js"></script>
     <script>
         fetch('/footer.html')
