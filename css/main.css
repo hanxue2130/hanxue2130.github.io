@@ -1971,4 +1971,35 @@ note-default {
   .link-text:only-child {
     margin-left: 1rem;
   }
+  #projects .card {
+    background-color: #2f4154; /* Match the background color */
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  #projects .card-img-top {
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    border-radius: 10px; /* Match the container's border-radius */
+    background-color: #2f4154; /* Fallback background color */
+  }
+  #eventup {
+    border: 5px solid rgba(255, 255, 255, 0.5); /* Transparent border */
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  #eventup img {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+
+  #eventup img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.8); /* Light effect */
+  }
 }

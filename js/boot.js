@@ -1,24 +1,15 @@
 /* global Fluid, CONFIG */
 
-Fluid.boot = {};
 
-Fluid.boot.registerEvents = function() {
-  Fluid.events.billboard();
-  Fluid.events.registerNavbarEvent();
-  Fluid.events.registerParallaxEvent();
-  Fluid.events.registerScrollDownArrowEvent();
-  Fluid.events.registerScrollTopArrowEvent();
-  Fluid.events.registerImageLoadedEvent();
-};
+<!-- Fluid config -->
+<script id="fluid-configs">
+  var Fluid = window.Fluid || {};
+  var CONFIG = { /* ... your config ... */ };
+</script>
 
-Fluid.boot.initPlugins = function() {
-  CONFIG.anchorjs.enable && Fluid.plugins.initAnchor();
-  CONFIG.toc.enable && Fluid.plugins.initTocBot();
-  CONFIG.image_zoom.enable && Fluid.plugins.initFancyBox();
-  CONFIG.copy_btn && Fluid.plugins.initCopyCode();
-};
-
-document.addEventListener('DOMContentLoaded', function() {
-  Fluid.boot.registerEvents();
-  Fluid.boot.initPlugins();
-});
+<!-- External scripts -->
+<script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js"></script>
