@@ -2002,4 +2002,12 @@ note-default {
     transform: scale(1.05);
     box-shadow: 0 8px 16px rgba(255, 255, 255, 0.8); /* Light effect */
   }
+  [data-default-color-scheme="dark"] {
+    background: #222;
+    color: #eee;
+  }
+  [data-default-color-scheme="light"] {
+    background: #fff;
+    color: #222;
+  }
 }
