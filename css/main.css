@@ -558,7 +558,6 @@ img[lazyload] {
 }
 .flex-center {
   display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
   -ms-flex-align: center;
@@ -891,7 +890,7 @@ img[lazyload] {
 .markdown-body {
   font-size: 1rem;
   line-height: 1.6;
-  font-family: var(--font-family-sans-serif);
+  --font-family-sans-serif: "Helvetica Neue", Arial, "Liberation Sans", sans-serif;
   margin-bottom: 2rem;
   color: var(--post-text-color);
 }
@@ -1017,8 +1016,8 @@ figure.highlight td.gutter:not(.hljs) {
 figure.highlight td.gutter pre {
   text-align: right;
   font-size: 1px;
-  overflow-x: none;
-  overflow-y: none;
+  overflow-x: hidden;
+  overflow-y: hidden;
   padding: 0 0.75rem;
   line-height: 1.5;
   background-color: inherit;
@@ -1497,7 +1496,6 @@ post-custom {
   margin-left: 0.5rem;
 }
 #toc {
-  position: -webkit-sticky;
   position: sticky;
   top: 2rem;
   padding: 3rem 0 0 0;
@@ -1515,7 +1513,6 @@ post-custom {
 .toc-body {
   max-height: 75vh;
   overflow-y: auto;
-  overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
 }
 .toc-body ol {
@@ -1941,7 +1938,7 @@ note-default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: $text_color;
+  color: var(--text-color);
   font-weight: bold;
 }
 .link-intro {

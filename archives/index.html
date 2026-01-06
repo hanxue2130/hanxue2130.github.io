@@ -28,12 +28,16 @@
     <link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
     <link rel="stylesheet" href="/css/main.css"/>
     <script src="/js/boot.js"></script>
-    <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
     <script>
         fetch('/footer.html')
             .then(response => response.text())
             .then(html => {
                 document.getElementById('footer').innerHTML = html;
+            });
+        fetch('/header.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('header').innerHTML = html;
             });
     </script>
 
@@ -42,114 +46,9 @@
 
 
 <body>
-<header style="height: 60vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <strong>Chen&#39;s Blog</strong>
-            </a>
-
-            <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <div class="animated-icon"><span></span><span></span><span></span></div>
-            </button>
-
-            <!-- Collapsible content -->
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto text-center">
-
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <i class="iconfont icon-home-fill"></i>
-                            Home
-                        </a>
-                    </li>
-
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/archives/">
-                            <i class="iconfont icon-archive-fill"></i>
-                            Projects
-                        </a>
-                    </li>
-
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about/">
-                            <i class="iconfont icon-user-fill"></i>
-                            About
-                        </a>
-                    </li>
-
-
-                    <li class="nav-item" id="search-btn">
-                        <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal"
-                           data-target="#modalSearch" aria-label="Search">
-                            &nbsp;<i class="iconfont icon-search"></i>&nbsp;
-                        </a>
-                    </li>
-
-
-                    <li class="nav-item" id="color-toggle-btn">
-                        <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-        <div class="full-bg-img">
-            <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-                <div class="page-header text-center fade-in-up">
-
-            <span class="h2" id="subtitle" title="Projects">
-
-            </span>
-
-                </div>
-
-
-            </div>
-        </div>
-    </div>
-</header>
+<div id="header"></div>
 
 <main>
-
-
-    <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-    </a>
-
-
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header text-center">
-                    <h4 class="modal-title w-100 font-weight-bold">Search</h4>
-                    <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body mx-3">
-                    <div class="md-form mb-5">
-                        <input type="text" id="local-search-input" class="form-control validate">
-                        <label data-error="x" data-success="v"
-                               for="local-search-input">keyword</label>
-                    </div>
-                    <div class="list-group" id="local-search-result"></div>
-                </div>
-            </div>
-        </div>
-    </div>
     <section id="eventup" class="container mt-5">
         <div class="text-center">
             <h1>EventUp</h1>
@@ -161,8 +60,10 @@
             </div>
             <div class="col-md-6 order-md-1">
                 <h3>About EventUp</h3>
-                <p>EventUp transforms how you plan, organize, and enjoy your tasks. Built on a robust Swift-based framework, it combines style and functionality for effortless event coordination.</p>
-                <p>Now available on the Apple App Store, EventUp helps you create memorable experiences, whether for small task or long-term goal.</p>
+                <p>EventUp transforms how you plan, organize, and enjoy your tasks. Built on a robust Swift-based
+                    framework, it combines style and functionality for effortless event coordination.</p>
+                <p>Now available on the Apple App Store, EventUp helps you create memorable experiences, whether for
+                    small task or long-term goal.</p>
                 <ul>
                     <li>Modern, intuitive interface for easy navigation</li>
                     <li>Instant event updates and smart notifications</li>

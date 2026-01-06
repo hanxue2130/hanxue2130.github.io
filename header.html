@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <header style="height: 100vh;">
+        <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <strong>Chen&#39;s Blog</strong>
+                </a>
+
+                <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <div class="animated-icon"><span></span><span></span><span></span></div>
+                </button>
+
+                <!-- Collapsible content -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto text-center">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="iconfont icon-home-fill"></i>
+                                Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/archives/">
+                                <i class="iconfont icon-archive-fill"></i>
+                                Projects
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/about/">
+                                <i class="iconfont icon-user-fill"></i>
+                                About
+                            </a>
+                        </li>
+                        <li class="nav-item" id="search-btn">
+                            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal"
+                               data-target="#modalSearch" aria-label="Search">
+                                &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="banner" id="banner" parallax=true
+             style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+            <div class="full-bg-img">
+                <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+                    <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="If not now, when?">
+            </span>
+                    </div>
+                    <div class="scroll-down-bar">
+                        <i class="iconfont icon-arrowdown"></i>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+            <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+        </a>
+
+
+        <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+                        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body mx-3">
+                        <div class="md-form mb-5">
+                            <input type="text" id="local-search-input" class="form-control validate">
+                            <label data-error="x" data-success="v"
+                                   for="local-search-input">keyword</label>
+                        </div>
+                        <!--                    <div class="list-group" id="local-search-result"></div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</head>
+<body>
+
+</body>
+</html>
