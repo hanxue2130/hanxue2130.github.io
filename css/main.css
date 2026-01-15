@@ -1109,7 +1109,7 @@ note-default {
 }
 
 
-@media (max-width: 2000px) {
+
   .links {
     display: flex;
     flex-direction: column;
@@ -1266,4 +1266,4 @@ note-default {
     box-shadow: 0 4px 16px rgba(215,38,61,0.18);
     border: 2px solid #fff;
   }
-}
+
