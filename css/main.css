@@ -1257,5 +1257,13 @@ note-default {
     from { opacity: 0; transform: translateY(30px);}
     to { opacity: 1; transform: translateY(0);}
   }
-
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-color: #d7263d; /* Cherry color */
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    box-shadow: 0 4px 16px rgba(215,38,61,0.18);
+    border: 2px solid #fff;
+  }
 }
