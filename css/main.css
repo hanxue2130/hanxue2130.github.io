@@ -17,9 +17,9 @@
   width: 80%;
 }
 
-@media (max-width: 100vh) {
+@media (max-width: 500vh) {
   header {
-    max-height: 100vw;
+    max-height: 150vw;
   }
   #board {
     margin-top: -1rem !important;
@@ -73,7 +73,7 @@ body {
 html,
 body,
 header {
-  height: 100%;
+  height: auto;
 }
 
 body a:hover {
@@ -188,11 +188,15 @@ img[lazyload] {
 }
 .navbar .dropdown-menu {
   font-size: 0.875rem;
-  color: var(--navbar-text-color);
-  background-color: rgba(0,0,0,0.3);
+  background-color: #fff !important; /* white background */
+  color: #de3163 !important;         /* cherry text color */
   border: none;
   -webkit-transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;
   transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;
+}
+.navbar .dropdown-menu .dropdown-item:hover {
+  background-color: #ffe3ec !important; /* light cherry on hover */
+  color: #de3163 !important;
 }
 
 .navbar .animated-icon {
@@ -1170,6 +1174,7 @@ note-default {
     flex: 0 0 100%;
   }
   #eventup {
+    margin-top: 2rem;
     background: none !important;
     background-color: transparent !important; /* or use transparent if you want no color */
     box-shadow: none !important;
