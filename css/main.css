@@ -60,8 +60,6 @@ footer .beian > * {
 }
 
 
-
-
 html {
   font-size: 16px;
   letter-spacing: 0.02em;
@@ -1207,7 +1205,7 @@ note-default {
   #projects .card-img-top {
     object-fit: cover;
     width: 100%;
-    height: auto;
+    height: 200px;
     border-radius: 10px; /* Match the container's border-radius */
   }
   #eventup {
