@@ -161,6 +161,25 @@ img[lazyload] {
 .navbar .nav-item .nav-link i {
   font-size: 0.875rem;
 }
+
+.navbar .nav-weather-item {
+  display: flex;
+  align-items: center;
+}
+
+.navbar .nav-weather-item .nav-weather-pill {
+  cursor: default;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.15);
+  font-size: 0.8rem;
+  line-height: 1.2;
+  padding: 0.35rem 0.65rem;
+  white-space: nowrap;
+}
+
+.navbar .nav-weather-item .nav-weather-pill i {
+  margin-right: 0.25rem;
+}
 .navbar .navbar-toggler {
   border-width: 0;
   outline: 0;
@@ -1301,6 +1320,20 @@ note-default {
   gap: 0.5rem;
 }
 
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.75rem;
+}
+
+.weather-city-card {
+  background: linear-gradient(145deg, #f7fbff, #edf4ff);
+  border: 1px solid #dbe8f8;
+  border-radius: 12px;
+  padding: 0.7rem;
+  box-shadow: 0 4px 10px rgba(47, 65, 84, 0.08);
+}
+
 .weather-head {
   display: flex;
   align-items: center;
@@ -1398,4 +1431,3 @@ note-default {
   color: #fff;
   box-shadow: 0 8px 20px rgba(183, 110, 158, 0.25);
 }
-

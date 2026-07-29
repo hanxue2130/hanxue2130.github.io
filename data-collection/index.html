@@ -54,16 +54,9 @@
                 <div class="card h-100 data-card">
                     <div class="card-body">
                         <h5 class="card-title">Weather Snapshot</h5>
-                        <p class="text-muted small">Current conditions for Australia and China.</p>
-                        <div id="weather-list">
-                            <div id="weather-australia" class="data-line weather-row">
-                                <div class="weather-head"><i class="fas fa-cloud-sun"></i><strong>Australia</strong></div>
-                                <div class="weather-metrics"><span class="weather-pill">Loading...</span></div>
-                            </div>
-                            <div id="weather-china" class="data-line weather-row">
-                                <div class="weather-head"><i class="fas fa-cloud-sun"></i><strong>China</strong></div>
-                                <div class="weather-metrics"><span class="weather-pill">Loading...</span></div>
-                            </div>
+                        <p class="text-muted small">Current conditions for selected cities.</p>
+                        <div id="weather-list" class="weather-grid">
+                            <p class="mb-0 text-muted small">Loading city weather...</p>
                         </div>
                     </div>
                 </div>
@@ -93,4 +86,3 @@
 <script src="/js/data-collection.js"></script>
 </body>
 </html>
-

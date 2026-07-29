@@ -1,11 +1,14 @@
  (function () {
   const weatherLocations = [
-    { label: "Australia", lat: -25.2744, lon: 133.7751, elementId: "weather-australia" },
-    { label: "China", lat: 35.8617, lon: 104.1954, elementId: "weather-china" }
+    { label: "Melbourne", country: "Australia", lat: -37.8409, lon: 144.9464, elementId: "weather-melbourne" },
+    { label: "Sydney", country: "Australia", lat: -33.868, lon: 151.2093, elementId: "weather-sydney" },
+    { label: "Shenzhen", country: "China", lat: 22.5428, lon: 114.0579, elementId: "weather-shenzhen" },
+    { label: "Beijing", country: "China", lat: 39.9166, lon: 116.3833, elementId: "weather-beijing" }
   ];
 
   const state = { marsItems: [] };
   const statusEl = document.getElementById("api-status");
+  const weatherListEl = document.getElementById("weather-list");
   const marsCardEl = document.getElementById("mars-card");
   const marsRefreshBtnEl = document.getElementById("mars-refresh-btn");
 
@@ -70,6 +73,22 @@
     if (code >= 71 && code <= 77) return "fas fa-snowflake";
     if (code >= 95) return "fas fa-bolt";
     return "fas fa-cloud";
+  }
+
+  function initWeatherCards() {
+    if (!weatherListEl) {
+      return;
+    }
+
+    weatherListEl.innerHTML = weatherLocations.map(function (location) {
+      return "<div id=\"" + location.elementId + "\" class=\"weather-city-card weather-row\">"
+        + "<div class=\"weather-head\"><i class=\"fas fa-cloud-sun\"></i><strong>"
+        + location.label
+        + "</strong><span class=\"weather-condition\">"
+        + location.country
+        + "</span></div>"
+        + "<div class=\"weather-metrics\"><span class=\"weather-pill\">Loading...</span></div></div>";
+    }).join("");
   }
 
   function renderWeatherLine(element, label, payload) {
@@ -141,11 +160,10 @@
 
   async function init() {
     try {
-      const results = await Promise.allSettled([
-        fetchWeather(weatherLocations[0]),
-        fetchWeather(weatherLocations[1]),
-        fetchMarsItems()
-      ]);
+      const weatherPromises = weatherLocations.map(function (location) {
+        return fetchWeather(location);
+      });
+      const results = await Promise.allSettled(weatherPromises.concat(fetchMarsItems()));
 
       weatherLocations.forEach(function (location, index) {
         const result = results[index];
@@ -154,12 +172,14 @@
         renderWeatherLine(element, location.label, payload);
       });
 
-      const marsResult = results[2];
+      const marsResult = results[weatherLocations.length];
       state.marsItems = marsResult.status === "fulfilled" ? marsResult.value : [];
       refreshMarsCard();
 
-      const allWeatherOk = results[0].status === "fulfilled" && results[1].status === "fulfilled";
-      const marsOk = results[2].status === "fulfilled";
+      const allWeatherOk = results.slice(0, weatherLocations.length).every(function (result) {
+        return result.status === "fulfilled";
+      });
+      const marsOk = marsResult.status === "fulfilled";
       statusEl.className = allWeatherOk && marsOk ? "alert alert-success" : "alert alert-warning";
       statusEl.textContent = allWeatherOk && marsOk
         ? "Live data loaded successfully."
@@ -178,5 +198,6 @@
     marsRefreshBtnEl.addEventListener("click", refreshMarsCard);
   }
 
+  initWeatherCards();
   init();
 })();
