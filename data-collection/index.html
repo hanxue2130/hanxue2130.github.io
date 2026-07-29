@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="theme-color" content="#2f4154">
+    <meta name="description" content="Data collection dashboard with weather snapshots and Mars highlights">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Data Collection">
+    <meta property="og:url" content="https://hanxue2130.github.io/data-collection/index.html">
+    <meta property="og:site_name" content="Chen's blog">
+    <meta property="og:description" content="Interesting live weather snapshots and Mars highlights">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+    <link rel="icon" href="/img/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+    <link rel="stylesheet" href="/css/main.css"/>
+    <script src="/js/boot.js"></script>
+    <script>
+        fetch('/footer.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('footer').innerHTML = html;
+            });
+        fetch('/header.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('header').innerHTML = html;
+            });
+    </script>
+    <title>Data Collection - Chen's blog</title>
+</head>
+<body>
+<main>
+    <div id="header"></div>
+
+    <section class="container mt-5 pt-4" id="data-collection-board">
+        <div class="text-center mb-4">
+            <h2>Data Collection</h2>
+            <p class="text-muted mb-0">Live weather snapshots and Mars highlights.</p>
+        </div>
+
+        <div id="api-status" class="alert alert-info" role="alert">
+            Loading latest data...
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-lg-6 mb-3">
+                <div class="card h-100 data-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Weather Snapshot</h5>
+                        <p class="text-muted small">Current conditions for Australia and China.</p>
+                        <div id="weather-list">
+                            <div id="weather-australia" class="data-line weather-row">
+                                <div class="weather-head"><i class="fas fa-cloud-sun"></i><strong>Australia</strong></div>
+                                <div class="weather-metrics"><span class="weather-pill">Loading...</span></div>
+                            </div>
+                            <div id="weather-china" class="data-line weather-row">
+                                <div class="weather-head"><i class="fas fa-cloud-sun"></i><strong>China</strong></div>
+                                <div class="weather-metrics"><span class="weather-pill">Loading...</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-3">
+                <div class="card h-100 data-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Mars Snapshot</h5>
+                            <button id="mars-refresh-btn" class="btn btn-sm btn-outline-primary">Refresh</button>
+                        </div>
+                        <p class="text-muted small mt-2">A random Mars image and metadata.</p>
+                        <div id="mars-card">
+                            <p class="mb-0">Loading Mars image...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+</main>
+
+<div id="footer"></div>
+<script src="/js/data-collection.js"></script>
+</body>
+</html>
+
