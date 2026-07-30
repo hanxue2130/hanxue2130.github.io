@@ -87,6 +87,29 @@ async function loadHeaderLocalWeather() {
     const lon = Number(location.longitude);
     const city = location.city || location.region || location.country_name || "Your location";
 
+    const weatherCard = document.querySelector(".weather-hover-card");
+
+    if (weatherCard) {
+      weatherCard.replaceChildren();
+
+      const title = document.createElement("strong");
+      title.textContent = `Welcome, friend from ${city || "somewhere"} 👋`;
+
+      const current = document.createElement("p");
+
+      const temp =
+          typeof temperature !== "undefined" ? temperature : "--";
+
+      const cond =
+          typeof condition !== "undefined" ? condition : "Unknown";
+
+      current.textContent = `Current conditions: ${temp}°C, ${cond}.`;
+
+      const footer = document.createElement("p");
+      footer.textContent = "Have a fantastic day!";
+
+      weatherCard.append(title, current, footer);
+    }
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
       throw new Error("Coordinates unavailable");
     }

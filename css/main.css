@@ -1431,3 +1431,43 @@ note-default {
   color: #fff;
   box-shadow: 0 8px 20px rgba(183, 110, 158, 0.25);
 }
+
+.nav-weather-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.weather-hover-card {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  min-width: 260px;
+
+  background: white;
+  color: #333;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+
+  transition: all .25s ease;
+  z-index: 1000;
+}
+
+.nav-weather-pill:hover .weather-hover-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.weather-hover-card p {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
