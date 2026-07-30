@@ -1,203 +1,346 @@
- (function () {
-  const weatherLocations = [
-    { label: "Melbourne", country: "Australia", lat: -37.8409, lon: 144.9464, elementId: "weather-melbourne" },
-    { label: "Sydney", country: "Australia", lat: -33.868, lon: 151.2093, elementId: "weather-sydney" },
-    { label: "Shenzhen", country: "China", lat: 22.5428, lon: 114.0579, elementId: "weather-shenzhen" },
-    { label: "Beijing", country: "China", lat: 39.9166, lon: 116.3833, elementId: "weather-beijing" }
-  ];
+(function () {
+  "use strict";
 
-  const state = { marsItems: [] };
-  const statusEl = document.getElementById("api-status");
-  const weatherListEl = document.getElementById("weather-list");
-  const marsCardEl = document.getElementById("mars-card");
-  const marsRefreshBtnEl = document.getElementById("mars-refresh-btn");
+  var cities = [];
 
-  async function fetchWeather(location) {
-    const url = "https://api.open-meteo.com/v1/forecast?latitude="
-      + encodeURIComponent(location.lat)
-      + "&longitude="
-      + encodeURIComponent(location.lon)
-      + "&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto";
+  // ─────────────────────────────────────────────
+  //  State
+  // ─────────────────────────────────────────────
+  var state = {
+    selectedIdx: 0,
+    marsItems:   [],
+    weatherCache: {},
+    chart:       null
+  };
 
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error("HTTP " + response.status + " while loading weather");
-    }
-    return response.json();
+  function showStatus(message) {
+    if (!statusEl) return;
+    statusEl.className = "alert alert-warning";
+    statusEl.textContent = message;
+    statusEl.style.display = "";
   }
 
-  async function fetchMarsItems() {
-    const response = await fetch("https://images-api.nasa.gov/search?q=mars&media_type=image&page=1");
-    if (!response.ok) {
-      throw new Error("HTTP " + response.status + " while loading Mars data");
-    }
+  function hideStatus() {
+    if (!statusEl) return;
+    statusEl.style.display = "none";
+    statusEl.textContent = "";
+  }
 
-    const payload = await response.json();
-    const items = (payload.collection && payload.collection.items) || [];
-    return items.filter(function (item) {
-      return Array.isArray(item.links) && item.links.length > 0 && item.links[0].href;
+  function fetchCityData() {
+    return fetch("/data-collection/cities.json").then(function (r) {
+      if (!r.ok) throw new Error("City dataset request failed");
+      return r.json();
+    }).then(function (payload) {
+      if (!payload || !Array.isArray(payload.cities)) {
+        throw new Error("City dataset format is invalid");
+      }
+      return payload.cities;
     });
   }
 
-  function getWeatherDescription(code) {
-    const map = {
-      0: "Clear sky",
-      1: "Mainly clear",
-      2: "Partly cloudy",
-      3: "Overcast",
-      45: "Fog",
-      48: "Rime fog",
-      51: "Light drizzle",
-      53: "Moderate drizzle",
-      55: "Dense drizzle",
-      61: "Slight rain",
-      63: "Moderate rain",
-      65: "Heavy rain",
-      71: "Slight snow",
-      73: "Moderate snow",
-      75: "Heavy snow",
-      80: "Rain showers",
-      81: "Moderate showers",
-      82: "Violent showers",
-      95: "Thunderstorm"
-    };
+  // ─────────────────────────────────────────────
+  //  DOM
+  // ─────────────────────────────────────────────
+  var statusEl      = document.getElementById("api-status");
+  var selectEl      = document.getElementById("city-select");
+  var panelEl       = document.getElementById("city-detail-panel");
+  var chartCardEl   = document.getElementById("city-chart-card");
+  var chartTitleEl  = document.getElementById("chart-title");
+  var marsCardEl    = document.getElementById("mars-card");
+  var marsRefreshEl = document.getElementById("mars-refresh-btn");
 
-    return map[code] || "Unspecified";
+  // ─────────────────────────────────────────────
+  //  Weather helpers
+  // ─────────────────────────────────────────────
+  var weatherMap = {
+    0:"Clear sky",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",
+    45:"Foggy",48:"Rime fog",
+    51:"Light drizzle",53:"Drizzle",55:"Heavy drizzle",
+    61:"Light rain",63:"Rain",65:"Heavy rain",
+    71:"Light snow",73:"Snow",75:"Heavy snow",
+    80:"Showers",81:"Heavy showers",82:"Violent showers",
+    95:"Thunderstorm"
+  };
+  function wDesc(c) { return weatherMap[c] || "Conditions unknown"; }
+  function wIcon(c) {
+    if (c <= 1)  return "fas fa-sun";
+    if (c <= 3)  return "fas fa-cloud-sun";
+    if (c <= 48) return "fas fa-smog";
+    if (c >= 71 && c <= 77) return "fas fa-snowflake";
+    if (c >= 95) return "fas fa-bolt";
+    return "fas fa-cloud-rain";
   }
 
-  function getWeatherIconClass(code) {
-    if (code === 0 || code === 1) return "fas fa-sun";
-    if (code === 2 || code === 3) return "fas fa-cloud-sun";
-    if (code === 45 || code === 48) return "fas fa-smog";
-    if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return "fas fa-cloud-rain";
-    if (code >= 71 && code <= 77) return "fas fa-snowflake";
-    if (code >= 95) return "fas fa-bolt";
-    return "fas fa-cloud";
+  // ─────────────────────────────────────────────
+  //  Fetch weather (only live API needed)
+  // ─────────────────────────────────────────────
+  function fetchWeather(city) {
+    return fetch(
+      "https://api.open-meteo.com/v1/forecast"
+      + "?latitude="  + city.lat
+      + "&longitude=" + city.lon
+      + "&current=temperature_2m,apparent_temperature,relative_humidity_2m,"
+      + "wind_speed_10m,precipitation,weather_code&timezone=auto"
+    ).then(function(r){ if(!r.ok) throw r; return r.json(); });
   }
 
-  function initWeatherCards() {
-    if (!weatherListEl) {
-      return;
-    }
-
-    weatherListEl.innerHTML = weatherLocations.map(function (location) {
-      return "<div id=\"" + location.elementId + "\" class=\"weather-city-card weather-row\">"
-        + "<div class=\"weather-head\"><i class=\"fas fa-cloud-sun\"></i><strong>"
-        + location.label
-        + "</strong><span class=\"weather-condition\">"
-        + location.country
-        + "</span></div>"
-        + "<div class=\"weather-metrics\"><span class=\"weather-pill\">Loading...</span></div></div>";
-    }).join("");
+  function fetchMars() {
+    return fetch("https://images-api.nasa.gov/search?q=mars&media_type=image&page=1")
+      .then(function(r){ if(!r.ok) throw r; return r.json(); })
+      .then(function(p){
+        var items = (p.collection && p.collection.items) || [];
+        return items.filter(function(i){ return i.links && i.links[0] && i.links[0].href; });
+      });
   }
 
-  function renderWeatherLine(element, label, payload) {
-    if (!element) {
-      return;
+  // ─────────────────────────────────────────────
+  //  Score colour
+  // ─────────────────────────────────────────────
+  function sColor(s) {
+    return s >= 7 ? "#27ae60" : s >= 5 ? "#f39c12" : "#e74c3c";
+  }
+
+  // ─────────────────────────────────────────────
+  //  Render panel
+  // ─────────────────────────────────────────────
+  function renderPanel(city, weather) {
+    // ── Weather strip ──
+    var weatherHtml = "";
+    if (weather && weather.current) {
+      var c    = weather.current;
+      var temp = Number(c.temperature_2m);
+      var feel = Number(c.apparent_temperature);
+      var hum  = Number(c.relative_humidity_2m);
+      var wind = Number(c.wind_speed_10m);
+      var prec = Number(c.precipitation);
+      var code = Number(c.weather_code);
+
+      weatherHtml =
+        "<div class='city-weather-strip'>"
+        + "<div class='cws-icon'><i class='" + wIcon(code) + "'></i></div>"
+        + "<div class='cws-main'>"
+        +   "<span class='cws-temp'>" + (Number.isFinite(temp) ? temp.toFixed(1) : "—") + "°C</span>"
+        +   "<span class='cws-desc'>" + wDesc(code) + "</span>"
+        + "</div>"
+        + "<div class='cws-pills'>"
+        +   "<span class='weather-pill'><i class='fas fa-thermometer-half'></i> Feels " + (Number.isFinite(feel) ? feel.toFixed(1)+"°C" : "—") + "</span>"
+        +   "<span class='weather-pill'><i class='fas fa-tint'></i> " + (Number.isFinite(hum) ? hum+"%" : "—") + "</span>"
+        +   "<span class='weather-pill'><i class='fas fa-wind'></i> " + (Number.isFinite(wind) ? wind.toFixed(1)+" km/h" : "—") + "</span>"
+        +   (Number.isFinite(prec) && prec > 0 ? "<span class='weather-pill'><i class='fas fa-umbrella'></i> "+prec.toFixed(1)+" mm</span>" : "")
+        + "</div>"
+        + "</div>";
+    } else {
+      weatherHtml = "<p class='text-muted small'>Weather data unavailable.</p>";
     }
 
-    if (!payload || !payload.current) {
-      element.innerHTML = "<div class=\"weather-head\"><i class=\"fas fa-exclamation-circle\"></i><strong>"
-        + label
-        + "</strong></div><div class=\"weather-metrics\"><span class=\"weather-pill\">Unavailable</span></div>";
-      return;
-    }
+    // ── Overall badge ──
+    var overallBadge =
+      "<div class='city-overall-badge'>"
+      + "<span class='cob-label'>Overall City Score</span>"
+      + "<span class='cob-value'>" + city.overall.toFixed(1) + "<span class='cob-unit'>/100</span></span>"
+      + "</div>";
 
-    const current = payload.current;
-    const temp = Number(current.temperature_2m);
-    const humidity = Number(current.relative_humidity_2m);
-    const wind = Number(current.wind_speed_10m);
-    const code = Number(current.weather_code);
+    // ── QoL bars ──
+    var barsHtml = "<div class='qol-grid'>";
+    city.scores.forEach(function(s) {
+      var col = sColor(s.score);
+      barsHtml +=
+        "<div class='qol-row'>"
+        + "<span class='qol-label'>" + s.name + "</span>"
+        + "<div class='qol-bar-wrap'><div class='qol-bar' style='width:" + Math.round(s.score * 10) + "%;background:" + col + ";'></div></div>"
+        + "<span class='qol-score' style='color:" + col + ";'>" + s.score.toFixed(1) + "</span>"
+        + "</div>";
+    });
+    barsHtml += "</div>";
 
-    const temperatureText = Number.isFinite(temp) ? temp.toFixed(1) + " deg C" : "-";
-    const humidityText = Number.isFinite(humidity) ? humidity + "%" : "-";
-    const windText = Number.isFinite(wind) ? wind.toFixed(1) + " km/h" : "-";
+    // ── Highlights grid ──
+    var factsHtml = "<div class='city-facts-grid'>";
+    city.highlights.forEach(function(h) {
+      factsHtml +=
+        "<div class='city-fact-card'>"
+        + "<span class='cfc-label'>" + h.label + "</span>"
+        + "<span class='cfc-value'>" + h.value + "</span>"
+        + "</div>";
+    });
+    factsHtml += "</div>";
 
-    element.innerHTML = "<div class=\"weather-head\"><i class=\"" + getWeatherIconClass(code) + "\"></i><strong>"
-      + label
-      + "</strong><span class=\"weather-condition\">"
-      + getWeatherDescription(code)
-      + "</span></div><div class=\"weather-metrics\">"
-      + "<span class=\"weather-pill\">Temp " + temperatureText + "</span>"
-      + "<span class=\"weather-pill\">Humidity " + humidityText + "</span>"
-      + "<span class=\"weather-pill\">Wind " + windText + "</span>"
+    // ── Assemble ──
+    panelEl.innerHTML =
+      "<div class='city-panel-header'>"
+      + "<div>"
+      +   "<h3 class='cph-name'>" + city.label + "</h3>"
+      +   "<span class='cph-country'>" + city.country + "</span>"
+      + "</div>"
+      + "</div>"
+
+      + "<div class='row'>"
+      +   "<div class='col-lg-6 mb-3'>"
+      +     "<div class='card data-card h-100'><div class='card-body'>"
+      +       "<h6 class='section-label'>Weather</h6>"
+      +       weatherHtml
+      +     "</div></div>"
+      +   "</div>"
+      +   "<div class='col-lg-6 mb-3'>"
+      +     "<div class='card data-card h-100'><div class='card-body'>"
+      +       "<h6 class='section-label'>Quality of Life</h6>"
+      +       overallBadge
+      +       barsHtml
+      +     "</div></div>"
+      +   "</div>"
+      +   "<div class='col-12 mb-3'>"
+      +     "<div class='card data-card'><div class='card-body py-3'>"
+      +       "<h6 class='section-label mb-2'>City Highlights</h6>"
+      +       factsHtml
+      +     "</div></div>"
+      +   "</div>"
       + "</div>";
   }
 
-  function renderMarsCard(item) {
-    if (!marsCardEl) {
+  // ─────────────────────────────────────────────
+  //  Render chart
+  // ─────────────────────────────────────────────
+  function renderChart(city) {
+    if (!chartCardEl) return;
+    if (state.chart) { state.chart.destroy(); state.chart = null; }
+
+    chartCardEl.style.display = "";
+    if (chartTitleEl) chartTitleEl.textContent = city.label + " — Quality of Life";
+
+    var cats   = city.scores.map(function(s){ return s.name; });
+    var vals   = city.scores.map(function(s){ return s.score; });
+    var colors = vals.map(function(v){ return sColor(v); });
+
+    var ctx = document.getElementById("city-chart");
+    if (!ctx) return;
+
+    state.chart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: cats,
+        datasets: [{
+          label: "Score / 10",
+          data: vals,
+          backgroundColor: colors.map(function(c){ return c + "cc"; }),
+          borderColor: colors,
+          borderWidth: 1,
+          borderRadius: 5
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx){ return " " + Number(ctx.raw).toFixed(1) + " / 10"; }
+            }
+          }
+        },
+        scales: {
+          x: { min: 0, max: 10, grid: { color: "rgba(0,0,0,0.05)" } },
+          y: { ticks: { font: { size: 11 } } }
+        }
+      }
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  //  Load city
+  // ─────────────────────────────────────────────
+  function loadCity(idx) {
+    state.selectedIdx = idx;
+    var city = cities[idx];
+
+    // Show spinner
+    panelEl.innerHTML =
+      "<div class='text-center py-4 text-muted'>"
+      + "<i class='fas fa-spinner fa-spin mr-2'></i>Loading " + city.label + "…</div>";
+    if (chartCardEl) chartCardEl.style.display = "none";
+
+    hideStatus();
+
+    // Render static data immediately, fetch live weather
+    var cached = state.weatherCache[city.label];
+    if (cached !== undefined) {
+      renderPanel(city, cached);
+      renderChart(city);
       return;
     }
 
-    if (!item) {
-      marsCardEl.innerHTML = "<p class=\"mb-0\">Mars snapshot unavailable.</p>";
-      return;
-    }
-
-    const data = item.data && item.data[0] ? item.data[0] : {};
-    const imageUrl = item.links && item.links[0] ? item.links[0].href : "";
-    const title = data.title || "Mars Image";
-    const dateCreated = data.date_created ? String(data.date_created).slice(0, 10) : "Unknown";
-    const center = data.center || "NASA";
-
-    marsCardEl.innerHTML = [
-      imageUrl ? "<img class=\"mars-image mb-3\" src=\"" + imageUrl + "\" alt=\"Mars snapshot\">" : "",
-      "<h6 class=\"mb-1\">" + title + "</h6>",
-      "<p class=\"mb-1\"><strong>Date:</strong> " + dateCreated + "</p>",
-      "<p class=\"mb-0\"><strong>Center:</strong> " + center + "</p>"
-    ].join("");
+    fetchWeather(city).then(function(w) {
+      state.weatherCache[city.label] = w;
+      if (state.selectedIdx !== idx) return;
+      renderPanel(city, w);
+      renderChart(city);
+    }).catch(function() {
+      state.weatherCache[city.label] = null;
+      if (state.selectedIdx !== idx) return;
+      renderPanel(city, null);
+      renderChart(city);
+      showStatus("Live weather is temporarily unavailable for " + city.label + ".");
+    });
   }
 
-  function refreshMarsCard() {
-    if (!state.marsItems.length) {
-      renderMarsCard(null);
-      return;
-    }
-
-    const randomIndex = Math.floor(Math.random() * state.marsItems.length);
-    renderMarsCard(state.marsItems[randomIndex]);
+  // ─────────────────────────────────────────────
+  //  Mars card
+  // ─────────────────────────────────────────────
+  function renderMars(item) {
+    if (!marsCardEl) return;
+    if (!item) { marsCardEl.innerHTML = "<p class='text-muted small mb-0'>Unavailable.</p>"; return; }
+    var d   = item.data && item.data[0] ? item.data[0] : {};
+    var img = item.links && item.links[0] ? item.links[0].href : "";
+    var date = d.date_created ? String(d.date_created).slice(0,10) : "Unknown";
+    marsCardEl.innerHTML =
+      (img ? "<img class='mars-image mb-3' src='" + img + "' alt='Mars'>" : "")
+      + "<h6 class='mb-1'>" + (d.title || "Mars Image") + "</h6>"
+      + "<p class='mb-0 text-muted small'>" + date + (d.center ? " &middot; " + d.center : "") + "</p>";
   }
 
-  async function init() {
-    try {
-      const weatherPromises = weatherLocations.map(function (location) {
-        return fetchWeather(location);
-      });
-      const results = await Promise.allSettled(weatherPromises.concat(fetchMarsItems()));
-
-      weatherLocations.forEach(function (location, index) {
-        const result = results[index];
-        const payload = result && result.status === "fulfilled" ? result.value : null;
-        const element = document.getElementById(location.elementId);
-        renderWeatherLine(element, location.label, payload);
-      });
-
-      const marsResult = results[weatherLocations.length];
-      state.marsItems = marsResult.status === "fulfilled" ? marsResult.value : [];
-      refreshMarsCard();
-
-      const allWeatherOk = results.slice(0, weatherLocations.length).every(function (result) {
-        return result.status === "fulfilled";
-      });
-      const marsOk = marsResult.status === "fulfilled";
-      statusEl.className = allWeatherOk && marsOk ? "alert alert-success" : "alert alert-warning";
-      statusEl.textContent = allWeatherOk && marsOk
-        ? "Live data loaded successfully."
-        : "Some data is temporarily unavailable.";
-    } catch (error) {
-      statusEl.className = "alert alert-danger";
-      statusEl.textContent = "Unable to load data right now. " + error.message;
-      weatherLocations.forEach(function (location) {
-        renderWeatherLine(document.getElementById(location.elementId), location.label, null);
-      });
-      renderMarsCard(null);
-    }
+  function refreshMars() {
+    if (!state.marsItems.length) { renderMars(null); return; }
+    renderMars(state.marsItems[Math.floor(Math.random() * state.marsItems.length)]);
   }
 
-  if (marsRefreshBtnEl) {
-    marsRefreshBtnEl.addEventListener("click", refreshMarsCard);
+  // ─────────────────────────────────────────────
+  //  Init
+  // ─────────────────────────────────────────────
+  function init() {
+    hideStatus();
+
+    if (marsRefreshEl) marsRefreshEl.addEventListener("click", refreshMars);
+
+    fetchMars()
+      .then(function(items){ state.marsItems = items; refreshMars(); })
+      .catch(function(){ renderMars(null); });
+
+    fetchCityData().then(function (loadedCities) {
+      cities = loadedCities;
+
+      if (!selectEl) {
+        throw new Error("City dropdown is missing from the page");
+      }
+
+      selectEl.innerHTML = "";
+      cities.forEach(function (city, i) {
+        var opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = city.label;
+        if (i === 0) opt.selected = true;
+        selectEl.appendChild(opt);
+      });
+
+      selectEl.addEventListener("change", function() {
+        loadCity(parseInt(selectEl.value, 10));
+      });
+
+      loadCity(0); // Sydney default
+    }).catch(function (error) {
+      panelEl.innerHTML = "<div class='text-muted py-3'>City data is unavailable right now.</div>";
+      showStatus("Unable to load city data.");
+    });
   }
 
-  initWeatherCards();
   init();
 })();

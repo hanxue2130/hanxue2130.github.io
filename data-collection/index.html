@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
     <link rel="stylesheet" href="/css/main.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
     <script src="/js/boot.js"></script>
     <script>
         fetch('/footer.html')
@@ -42,38 +43,34 @@
     <section class="container mt-5 pt-4" id="data-collection-board">
         <div class="text-center mb-4">
             <h2>Data Collection</h2>
-            <p class="text-muted mb-0">Live weather snapshots and Mars highlights.</p>
         </div>
 
-        <div id="api-status" class="alert alert-info" role="alert">
-            Loading latest data...
+        <div id="api-status" class="alert alert-warning" role="alert" style="display:none;">
+            Loading…
         </div>
 
-        <div class="row mt-3">
-            <div class="col-lg-6 mb-3">
-                <div class="card h-100 data-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Weather Snapshot</h5>
-                        <p class="text-muted small">Current conditions for selected cities.</p>
-                        <div id="weather-list" class="weather-grid">
-                            <p class="mb-0 text-muted small">Loading city weather...</p>
-                        </div>
-                    </div>
+        <!-- ── City Dropdown ── -->
+        <div class="city-dropdown-wrap mb-4">
+            <label class="city-dropdown-label" for="city-select">Select a City</label>
+            <select id="city-select" class="city-dropdown-select"></select>
+        </div>
+
+        <!-- ── City Detail Panel ── -->
+        <div id="city-detail-panel">
+            <!-- Populated by JS -->
+        </div>
+
+
+        <!-- ── Mars Row ── -->
+        <div class="card data-card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Mars Now</h5>
+                    <button id="mars-refresh-btn" class="btn btn-sm btn-outline-secondary">Refresh</button>
                 </div>
-            </div>
-
-            <div class="col-lg-6 mb-3">
-                <div class="card h-100 data-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">Mars Snapshot</h5>
-                            <button id="mars-refresh-btn" class="btn btn-sm btn-outline-primary">Refresh</button>
-                        </div>
-                        <p class="text-muted small mt-2">A random Mars image and metadata.</p>
-                        <div id="mars-card">
-                            <p class="mb-0">Loading Mars image...</p>
-                        </div>
-                    </div>
+                <p class="text-muted small mt-2 mb-3">A random image about Mars</p>
+                <div id="mars-card">
+                    <p class="mb-0 text-muted small">Loading…</p>
                 </div>
             </div>
 
