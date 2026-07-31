@@ -17,6 +17,7 @@ const MANUAL_THEME_SELECTION_KEY = "manual-theme-selection";
 let currentWeatherTheme = null;
 let weatherThemeNoteIntervalId = null;
 let weatherThemeNoteHideTimerId = null;
+let currentWeatherMotionThemeKey = "";
 
 const THEME_PRESETS = {
   sunny: { key: "sunny", mode: "light", label: "Sunny Theme", icon: "fas fa-sun", accent: "#f4b400" },
@@ -32,6 +33,147 @@ const THEME_PRESETS = {
 };
 
 const THEME_SELECTION_ORDER = ["auto", "sunny", "cloudy", "overcast", "misty", "drizzle", "rainy", "breezy", "windy", "snowy", "storm"];
+
+function randomBetween(min, max) {
+  return min + Math.random() * (max - min);
+}
+
+function ensureWeatherMotionLayer() {
+  let layer = document.getElementById("weather-motion-layer");
+  if (!layer) {
+    layer = document.createElement("div");
+    layer.id = "weather-motion-layer";
+    document.body.appendChild(layer);
+  }
+  return layer;
+}
+
+function clearWeatherMotionLayer(layer) {
+  layer.innerHTML = "";
+  layer.className = "";
+}
+
+function addRainDrops(layer, count) {
+  for (let i = 0; i < count; i += 1) {
+    const drop = document.createElement("span");
+    drop.className = "weather-motion-drop";
+    drop.style.left = randomBetween(0, 100).toFixed(2) + "%";
+    drop.style.animationDelay = randomBetween(0, 2.4).toFixed(2) + "s";
+    drop.style.animationDuration = randomBetween(0.8, 1.35).toFixed(2) + "s";
+    drop.style.opacity = randomBetween(0.2, 0.6).toFixed(2);
+    drop.style.height = randomBetween(12, 26).toFixed(0) + "px";
+    layer.appendChild(drop);
+  }
+}
+
+function addSnowFlakes(layer, count) {
+  for (let i = 0; i < count; i += 1) {
+    const flake = document.createElement("span");
+    flake.className = "weather-motion-flake";
+    flake.style.left = randomBetween(0, 100).toFixed(2) + "%";
+    flake.style.animationDelay = randomBetween(0, 4).toFixed(2) + "s";
+    flake.style.animationDuration = randomBetween(4, 8).toFixed(2) + "s";
+    flake.style.opacity = randomBetween(0.25, 0.8).toFixed(2);
+    const size = randomBetween(2, 5).toFixed(1) + "px";
+    flake.style.width = size;
+    flake.style.height = size;
+    layer.appendChild(flake);
+  }
+}
+
+function addFogClouds(layer, count) {
+  for (let i = 0; i < count; i += 1) {
+    const cloud = document.createElement("span");
+    cloud.className = "weather-motion-fog";
+    cloud.style.top = randomBetween(8, 75).toFixed(2) + "%";
+    cloud.style.left = randomBetween(-20, 80).toFixed(2) + "%";
+    cloud.style.animationDelay = randomBetween(0, 6).toFixed(2) + "s";
+    cloud.style.animationDuration = randomBetween(12, 26).toFixed(2) + "s";
+    cloud.style.opacity = randomBetween(0.08, 0.2).toFixed(2);
+    cloud.style.width = randomBetween(160, 360).toFixed(0) + "px";
+    cloud.style.height = randomBetween(40, 85).toFixed(0) + "px";
+    layer.appendChild(cloud);
+  }
+}
+
+function addWindLines(layer, count) {
+  for (let i = 0; i < count; i += 1) {
+    const line = document.createElement("span");
+    line.className = "weather-motion-wind";
+    line.style.top = randomBetween(10, 90).toFixed(2) + "%";
+    line.style.left = randomBetween(-40, 70).toFixed(2) + "%";
+    line.style.animationDelay = randomBetween(0, 3).toFixed(2) + "s";
+    line.style.animationDuration = randomBetween(2.8, 5.2).toFixed(2) + "s";
+    line.style.opacity = randomBetween(0.14, 0.42).toFixed(2);
+    line.style.width = randomBetween(60, 180).toFixed(0) + "px";
+    layer.appendChild(line);
+  }
+}
+
+function addSunGlow(layer) {
+  const glow = document.createElement("span");
+  glow.className = "weather-motion-sun";
+  layer.appendChild(glow);
+}
+
+function updateWeatherMotion(themeKey) {
+  if (!document.body) {
+    return;
+  }
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const existingLayer = document.getElementById("weather-motion-layer");
+    if (existingLayer) {
+      existingLayer.remove();
+    }
+    currentWeatherMotionThemeKey = "";
+    return;
+  }
+
+  if (currentWeatherMotionThemeKey === themeKey) {
+    return;
+  }
+
+  const layer = ensureWeatherMotionLayer();
+  clearWeatherMotionLayer(layer);
+  currentWeatherMotionThemeKey = themeKey;
+
+  layer.classList.add("weather-motion-layer", "theme-" + themeKey);
+
+  if (themeKey === "rainy") {
+    addRainDrops(layer, 72);
+    return;
+  }
+  if (themeKey === "drizzle") {
+    addRainDrops(layer, 42);
+    addFogClouds(layer, 2);
+    return;
+  }
+  if (themeKey === "storm") {
+    addRainDrops(layer, 92);
+    addWindLines(layer, 10);
+    return;
+  }
+  if (themeKey === "snowy") {
+    addSnowFlakes(layer, 55);
+    return;
+  }
+  if (themeKey === "misty" || themeKey === "cloudy" || themeKey === "overcast") {
+    addFogClouds(layer, themeKey === "misty" ? 5 : 3);
+    return;
+  }
+  if (themeKey === "breezy" || themeKey === "windy") {
+    addWindLines(layer, themeKey === "windy" ? 16 : 10);
+    return;
+  }
+  if (themeKey === "sunny") {
+    addSunGlow(layer);
+  }
+}
+
+function isThemeNoteEnabledForPage() {
+  const normalizedPath = (window.location.pathname || "").replace(/\/+$/, "") || "/";
+  return normalizedPath === "/" || normalizedPath === "/index.html";
+}
 
 function getHeaderWeatherDescription(code) {
   const map = {
@@ -115,6 +257,7 @@ function applyWeatherTheme(theme, modeOverride) {
   document.documentElement.setAttribute("data-default-color-scheme", mode);
   document.documentElement.setAttribute("data-weather-theme", theme.key);
   document.documentElement.style.setProperty("--weather-accent", theme.accent);
+  updateWeatherMotion(theme.key);
 }
 
 function getThemeSelection() {
@@ -166,6 +309,10 @@ function applyThemeSelection(selection) {
 }
 
 function showTimedWeatherThemeNote(baseText, iconClass) {
+  if (!isThemeNoteEnabledForPage()) {
+    return;
+  }
+
   let note = document.getElementById("weather-theme-note");
   if (!note) {
     note = document.createElement("div");
@@ -184,7 +331,7 @@ function showTimedWeatherThemeNote(baseText, iconClass) {
     weatherThemeNoteHideTimerId = null;
   }
 
-  let remaining = 10;
+  let remaining = 5;
   function render() {
     note.innerHTML = "<i class=\"" + iconClass + "\"></i> "
       + baseText
